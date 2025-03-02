@@ -12,8 +12,26 @@ def filedata_read(name: str):
     return 
 
 def menu():
-    print("MENU\n")
-    print("1. Посчитать y(x) для заданного значения аргумента и ")
+    print("MENU")
+    print("1. Посчитать y(x) для заданного значения аргумента x (0.0 - 4.2)")
+    print("3. Выйти из программы")
+
+    code = int(input())
+
+    return code
 
 def run():
-    
+    flag = True
+
+    while flag:
+        action = menu()
+
+        match action:
+            case 1:
+                pass
+            case 3:
+                flag = False
+            case _:
+                print("\nUndefined code\n")
+        
+    return 0
