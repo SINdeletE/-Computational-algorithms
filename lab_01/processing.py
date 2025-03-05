@@ -15,7 +15,7 @@ def table_str_output(x: float, y: float, y_der: float, y_der2):
 def filedata_read():
     data = []
 
-    f = open("data.txt", "r")
+    f = open("inverse_data.txt", "r")
 
     stroke = f.readline()
 
