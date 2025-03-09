@@ -15,7 +15,7 @@ def table_str_output(x: float, y: float, y_der: float, y_der2):
 def filedata_read():
     data = []
 
-    f = open("inverse_data.txt", "r")
+    f = open("t2.txt", "r")
 
     stroke = f.readline()
 
@@ -211,7 +211,6 @@ def run():
                     print("Невозможно посчитать")
                 else:
                     hermite_interpolation(data, x, n)
-                
 
             case 3:
                 flag = False
