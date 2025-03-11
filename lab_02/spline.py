@@ -1,8 +1,10 @@
 import copy
 
-x_column = [[0], [1], [2], [3], [4]]
-y_column = [[0], [1], [2], [3], [4]]
-z_column = [[0], [1], [2], [3], [4]]
+EPS = 1e-8
+
+x_column = [[0.0], [1.0], [2.0], [3.0], [4.0]]
+y_column = [[0.0], [1.0], [2.0], [3.0], [4.0]]
+z_column = [[0.0], [1.0], [2.0], [3.0], [4.0]]
 
 def forward_way(x: list, y: list, n: int):
     ksi_list = [0 for i in range(n + 2)]
@@ -35,9 +37,9 @@ def reverse_way(x: list, y: list, ksi_list: list, n_list: list, n: int):
 def c_list(x: list, y: list, n: int):
     c_list_tmp = [0 for i in range(n + 2)]
 
-    ksi_list, n_list = forward_way(x, y, n + 2)
+    ksi_list, n_list = forward_way(x, y, n)
 
-    c_list_tmp = reverse_way(x, y, ksi_list, n_list)
+    c_list_tmp = reverse_way(x, y, ksi_list, n_list, n)
 
     return c_list_tmp
 
@@ -74,7 +76,7 @@ def a_list(y: list, n: int):
 
 def end_index(x_list: list, x: float):
     i = 1
-    while i < len(x_list) and x > x_list[i]:
+    while i < len(x_list) and x - x_list[i] > EPS:
         i += 1
 
     return i
@@ -93,14 +95,11 @@ def polynome_value(a, b, c, d, x, xi):
 def spline_interpolation(data: list, x: float, n: int):
     x_list = [stroke[0] for stroke in data]
     y_list = [stroke[1] for stroke in data]
-
-    print(x_list)
-    print(y_list)
     
-    c = c_list(x_list, y_list, len(x_list))
-    d = d_list(x_list, y_list, c, len(x_list))
-    a = a_list(y_list, len(x_list))
-    b = b_list(x_list, y_list, c, len(x_list))
+    c = c_list(x_list, y_list, len(x_list) - 1)
+    d = d_list(x_list, y_list, c, len(x_list) - 1)
+    a = a_list(y_list, len(x_list) - 1)
+    b = b_list(x_list, y_list, c, len(x_list) - 1)
 
     i = end_index(x_list, x)
 
