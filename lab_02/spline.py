@@ -4,93 +4,79 @@ x_column = [[0], [1], [2], [3], [4]]
 y_column = [[0], [1], [2], [3], [4]]
 z_column = [[0], [1], [2], [3], [4]]
 
-def c_1(x: list, y: list, c_0: float):
-    h_1 = x[1] - x[0]
-    h_2 = x[2] - x[1]
+def forward_way(x: list, y: list, n: int):
+    ksi_list = [0 for i in range(n + 2)]
+    n_list = [0 for i in range(n + 2)]
+
+    for i in range(2, n + 1):
+        h_i_bef = x[i - 1] - x[i - 2]
+        h_i = x[i] - x[i - 1]
+
+        part_1 = y[i - 1] - h_i_bef * n_list[i]
+        part_2 = h_i_bef * ksi_list[i] + 2 * (h_i_bef + h_i)
+        
+        n_list[i + 1] = part_1 / part_2
+
+        part_1 = -h_i
+        part_2 = h_i_bef * ksi_list[i] + 2 * (h_i_bef + h_i)
+
+        ksi_list[i + 1] = part_1 / part_2
     
-    A_1 = h_1
-    B_1 = 2 * (h_1 + h_2)
-    C_1 = h_2
-    F_1 = 6 * ((y[2] - y[1]) / h_2 - (y[1] - y[0]) / h_1)
+    return ksi_list, n_list
 
-    c_1 = F_1 / (C_1 + B_1)
+def reverse_way(x: list, y: list, ksi_list: list, n_list: list, n: int):
+    c_list = [0 for i in range(n + 2)]
 
-    return c_1
+    for i in range(n, 1, -1):
+        c_list[i] = ksi_list[i + 1] * c_list[i + 1] + n_list[i + 1]
     
-def c_next(x: list, y: list, c: list):
-    h_i = x[1] - x[0]
-    h_i_next = x[2] - x[1]
-    
-    A_i = h_i
-    B_i = 2 * (h_i + h_i_next)
-    C_i = h_i_next
-    F_i = 6 * ((y[2] - y[1]) / h_i_next - (y[1] - y[0]) / h_i)
+    return c_list
 
-    c_i_next = F_i - A_i * c[0] - B_i * c[1]
+def c_list(x: list, y: list, n: int):
+    c_list_tmp = [0 for i in range(n + 2)]
 
-    return c_i_next
+    ksi_list, n_list = forward_way(x, y, n + 2)
 
-def c_list(x: float, y: float, n: int):
-    c_list_tmp = []
-
-    for i in range(n - 1):
-        if i == 0 or (i + 1) == n:
-            c_list_tmp.append(0)
-        else:
-
-            if i == 1:
-                x_012 = [x[0], x[1], x[2]]
-                y_012 = [y[0], y[1], y[2]]
-
-                c = c_1(x_012, y_012, c_list_tmp[0])
-
-                c_list_tmp.append(c)
-
-            x_list = [x[i - 1], x[i], x[i + 1]]
-            y_list = [y[i - 1], y[i], y[i + 1]]
-            c_list = [c_list_tmp[i - 1], c_list_tmp[i]]
-
-            c = c_next(x_list, y_list, c_list)
-
-            c_list_tmp.append(c)
-
-    c_list_tmp.append(0) # i == n
+    c_list_tmp = reverse_way(x, y, ksi_list, n_list)
 
     return c_list_tmp
 
 def d_list(x: list, y: list, c: list, n: int):
-    d_list_tmp = []
+    d_list_tmp = [0 for i in range(n + 1)]
 
-    for i in range(n):
-        if i == 0:
-            d_list_tmp.append(0)
-        else:
-            h_i = x[i] - x[i - 1]
+    for i in range(1, n + 1):
+        h_i = x[i] - x[i - 1]
 
-            d = (c[i] - c[i - 1]) / (3 * h_i)
-            d_list_tmp.append(d)
+        d_list_tmp[i] = (c[i + 1] - c[i]) / (3 * h_i)
     
     return d_list_tmp
 
-def b_list(x: list, a: list, n: int):
-    b_list_tmp = []
+def b_list(x: list, y: list, c: list, n: int):
+    b_list_tmp = [0 for i in range(n + 1)]
 
-    for i in range(n):
-        if i == 0:
-            b_list_tmp.append(0)
-        else:
-            h_i = x[i] - x[i - 1]
+    for i in range(1, n + 1):
+        h_i = x[i] - x[i - 1]
 
-            d = (a[i] - a[i - 1]) / h_i
-            b_list_tmp.append(d)
+        part_1 = (y[i] - y[i - 1]) / h_i
+        part_2 = h_i * (c[i + 1] - 2 * c[i]) / 3
+        
+        b_list_tmp[i] = part_1 - part_2
     
     return b_list_tmp
 
+def a_list(y: list, n: int):
+    a_list_tmp = [0 for i in range(n + 1)]
+
+    for i in range(1, n + 1):
+        a_list_tmp[i] = y[i - 1]
+    
+    return a_list_tmp
+
 def end_index(x_list: list, x: float):
     i = 1
-    while i < len(x_list) and x < x_list[i]:
+    while i < len(x_list) and x > x_list[i]:
         i += 1
-    
+
     return i
 
 def polynome_x_multi(x: float, xi: float, n: int):
@@ -107,11 +93,14 @@ def polynome_value(a, b, c, d, x, xi):
 def spline_interpolation(data: list, x: float, n: int):
     x_list = [stroke[0] for stroke in data]
     y_list = [stroke[1] for stroke in data]
+
+    print(x_list)
+    print(y_list)
     
     c = c_list(x_list, y_list, len(x_list))
     d = d_list(x_list, y_list, c, len(x_list))
-    a = copy.deepcopy(y_list)
-    b = b_list(x_list, a, len(x_list))
+    a = a_list(y_list, len(x_list))
+    b = b_list(x_list, y_list, c, len(x_list))
 
     i = end_index(x_list, x)
 

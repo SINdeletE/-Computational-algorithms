@@ -61,9 +61,9 @@ def run():
                 x = float(input("X: "))
                 y = float(input("Y: "))
                 z = float(input("Z: "))
-                nx = int(input("Nx: "))
-                ny = int(input("Ny: "))
-                nz = int(input("Nz: "))
+                nx = 0
+                ny = 0
+                nz = 0
                 
                 u = spline.spline_cube_interpolation(cube_data, x, y, z, nx, ny, nz)
                 print(f"u({x:.6g}, {y:.6g}, {z:.6g}) = {u}")
