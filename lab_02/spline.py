@@ -44,7 +44,7 @@ def c_list(x: list, y: list, n: int):
     return c_list_tmp
 
 def d_list(x: list, y: list, c: list, n: int):
-    d_list_tmp = [0 for i in range(n + 1)]
+    d_list_tmp = [0 for i in range(n + 2)]
 
     for i in range(1, n + 1):
         h_i = x[i] - x[i - 1]
@@ -54,7 +54,7 @@ def d_list(x: list, y: list, c: list, n: int):
     return d_list_tmp
 
 def b_list(x: list, y: list, c: list, n: int):
-    b_list_tmp = [0 for i in range(n + 1)]
+    b_list_tmp = [0 for i in range(n + 2)]
 
     for i in range(1, n + 1):
         h_i = x[i] - x[i - 1]
@@ -76,8 +76,11 @@ def a_list(y: list, n: int):
 
 def end_index(x_list: list, x: float):
     i = 1
-    while i < len(x_list) and x - x_list[i] > EPS:
+    while i < len(x_list) and x - x_list[i] > -EPS:
         i += 1
+
+    if i == len(x_list):
+        i -= 1
 
     return i
 
