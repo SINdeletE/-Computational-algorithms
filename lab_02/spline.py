@@ -11,18 +11,23 @@ def forward_way(x: list, y: list, n: int):
     n_list = [0 for i in range(n + 2)]
 
     for i in range(2, n + 1):
-        h_i_bef = x[i - 1] - x[i - 2]
-        h_i = x[i] - x[i - 1]
+        if i == 2:
+            n_list[i] = 0
+            ksi_list[i] = 0
+        else:
+            h_i_bef = x[i - 1] - x[i - 2]
+            h_i = x[i] - x[i - 1]
+            f_i = 3 * ((y[i] - y[i - 1]) / h_i - (y[i - 1] - y[i - 2]) / h_i_bef)
 
-        part_1 = y[i - 1] - h_i_bef * n_list[i]
-        part_2 = h_i_bef * ksi_list[i] + 2 * (h_i_bef + h_i)
-        
-        n_list[i + 1] = part_1 / part_2
+            part_1 = f_i - h_i_bef * n_list[i]
+            part_2 = h_i_bef * ksi_list[i] + 2 * (h_i_bef + h_i)
+            
+            n_list[i + 1] = part_1 / part_2
 
-        part_1 = -h_i
-        part_2 = h_i_bef * ksi_list[i] + 2 * (h_i_bef + h_i)
+            part_1 = -h_i
+            part_2 = h_i_bef * ksi_list[i] + 2 * (h_i_bef + h_i)
 
-        ksi_list[i + 1] = part_1 / part_2
+            ksi_list[i + 1] = part_1 / part_2
     
     return ksi_list, n_list
 
